@@ -12,20 +12,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Copy files to EC2 using SSH
-        uses: appleboy/scp-action@v0.2.0
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "."
-          target: "/var/www/myapp"
+      - name: Generate SSH key file
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
+          chmod 600 key.pem
+
+      - name: Copy files to EC2
+        run: |
+          scp -o StrictHostKeyChecking=no -i key.pem -r ./public/* ubuntu@${{ secrets.EC2_HOST }}:/var/www/myapp/
 
       - name: Restart Nginx
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            sudo systemctl restart nginx
+        run: |
+          ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@${{ secrets.EC2_HOST }} "sudo systemctl restart nginx"
