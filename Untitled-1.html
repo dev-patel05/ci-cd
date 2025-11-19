@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sample CI/CD Site</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>🚀 CI/CD Demo</h1>
+    <p id="desc">This is a simple static site to test GitHub Actions CI/CD → GitHub Pages.</p>
+
+    <section class="cards">
+      <article class="card">
+        <h2>Build</h2>
+        <p>Action runs tests / build steps (if present).</p>
+      </article>
+
+      <article class="card">
+        <h2>Test</h2>
+        <p>We run quick checks to verify site health.</p>
+      </article>
+
+      <article class="card">
+        <h2>Deploy</h2>
+        <p>On success, the site is deployed to GitHub Pages.</p>
+      </article>
+    </section>
+
+    <button id="magic">Click me</button>
+    <footer>
+      <small>Last updated: <span id="time"></span></small>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
