@@ -25,15 +25,24 @@ pipeline {
             steps {
                 sshagent(credentials: ['ec2-ssh-key']) {
                     sh '''
-                        echo "Deploying website..."
+                        echo "🚀 Starting Deployment..."
 
-                        # Create folder on EC2
-                        ssh -o StrictHostKeyChecking=no ubuntu@54.234.145.116 "sudo mkdir -p /var/www/html/"
+                        # Check 'public' folder exists
+                        if [ ! -d "public" ]; then
+                            echo "❌ ERROR: public/ folder does not exist!"
+                            exit 1
+                        fi
 
-                        # Copy files to EC2 web root
-                        scp -o StrictHostKeyChecking=no -r public/* ubuntu@${EC2_IP}:/var/www/html/
+                        # Preparing EC2 folder
+                        ssh -o StrictHostKeyChecking=no ubuntu@54.234.145.116 "sudo mkdir -p /var/www/html && sudo chown ubuntu:ubuntu /var/www/html"
 
-                        echo "Deployment completed."
+                        # Clean old files
+                        ssh -o StrictHostKeyChecking=no ubuntu@54.234.145.116 "rm -rf /var/www/html/*"
+
+                        # Upload new build files
+                        scp -o StrictHostKeyChecking=no -r public/* ubuntu@54.234.145.116:/var/www/html/
+
+                        echo "✅ Deployment Completed Successfully!"
                     '''
                 }
             }
