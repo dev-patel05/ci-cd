@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/dev-patel05/ci-cd.git'
+            }
+        }
+
+        stage('Validate Files') {
+            steps {
+                echo "Listing project files..."
+                sh 'ls -l'
+            }
+        }
+
+        stage('Archive Artifacts') {
+            steps {
+                archiveArtifacts artifacts: '**/*', fingerprint: true
+            }
+        }
+
+        stage('Deploy to EC2 Web Server') {
+            steps {
+                sshagent(credentials: ['ec2-ssh-key']) {
+                    sh '''
+                        echo "Deploying website..."
+
+                        # Create folder on EC2
+                        ssh -o StrictHostKeyChecking=no ubuntu@<YOUR-EC2-PUBLIC-IP> "sudo mkdir -p /var/www/html/"
+
+                        # Copy files to EC2 web root
+                        scp -o StrictHostKeyChecking=no -r * ubuntu@<YOUR-EC2-PUBLIC-IP>:/var/www/html/
+
+                        echo "Deployment completed."
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "🎉 Deployment Success!"
+        }
+        failure {
+            echo "❌ Deployment Failed!"
+        }
+    }
+}
