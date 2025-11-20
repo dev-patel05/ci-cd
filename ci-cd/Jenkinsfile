@@ -28,10 +28,10 @@ pipeline {
                         echo "Deploying website..."
 
                         # Create folder on EC2
-                        ssh -o StrictHostKeyChecking=no ubuntu@<YOUR-EC2-PUBLIC-IP> "sudo mkdir -p /var/www/html/"
+                        ssh -o StrictHostKeyChecking=no ubuntu@54.234.145.116 "sudo mkdir -p /var/www/html/"
 
                         # Copy files to EC2 web root
-                        scp -o StrictHostKeyChecking=no -r * ubuntu@<YOUR-EC2-PUBLIC-IP>:/var/www/html/
+                        scp -o StrictHostKeyChecking=no -r * ubuntu@54.234.145.116:/var/www/html/
 
                         echo "Deployment completed."
                     '''
